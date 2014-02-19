@@ -13,9 +13,11 @@
     <link rel='stylesheet' href='spectrum.css' />
 
     <style>
-    #painter, html, body {
+    html, body {
         margin: 0;
         padding: 0;
+        width: 100%;
+        height: 100%;
     }
     html {
         background-color: #000000;
@@ -53,10 +55,13 @@
     <script id="preload"></script>
     <script id="script">
     var tool = "pencil";
+    var id;
+    var bMouseButtonIsDown;
     var bRainbow = false;
     var bCanvasResizeDirty = false;
     var currentColor = "#000000";
     var processingBackgroundImage;
+    var processingBackgroundUrl;
 
     // sketch
 
@@ -70,10 +75,6 @@
             processing.stroke(0);
         };
         processing.draw = function() {
-            if (bCanvasResizeDirty == true) {
-                processing.image(processingBackgroundImage,0,0);
-                bCanvasResizeDirty = false;
-            };
             if (bDrawing == true) {
                 // processing.ellipse( processing.mouseX - 5, processing.mouseY - 5, 10, 10 );
                 if(bRainbow == true) {
@@ -107,11 +108,13 @@
             };
         };
         processing.mousePressed = function() {
+            bMouseButtonIsDown = true;
             lastX = processing.mouseX;
             lastY = processing.mouseY;
             bDrawing = true;
         };
         processing.mouseReleased = function() {
+            bMouseButtonIsDown = false;
             if (tool == "line") {
                 processing.line(lastX, lastY, processing.mouseX, processing.mouseY)
             };
@@ -206,6 +209,8 @@
     // event listener for resizing the window
     $(window).resize(function() {
         resizeCanvas(canvas);
+        clearTimeout(id);
+        id = setTimeout(resizeProcessing(), 500);
     });
 
 
@@ -215,6 +220,18 @@
         button.addClass("active");
     };
 
+
+    function resizeProcessing() {
+        canvas.attr('width', $(window).width());
+        canvas.attr('height', $(window).height());
+        if (processingInstance) {
+            if (bCanvasResizeDirty == true) {
+                processingInstance.size($(window).width(), $(window).height());
+                processingInstance.image(processingBackgroundImage,0,0);
+                bCanvasResizeDirty = false;
+            };
+        };
+    };
 
     // function to set the stroke color in processing
     function setColor() {
@@ -226,17 +243,14 @@
     // function to resize the canvas and the sketch
     function resizeCanvas(canvas) {
         if (processingInstance) {
-            var dataURI = canvas[0].toDataURL("image/jpeg");
-            // processingBackgroundUrl = dataURI;
-            var processingBackgroundUrl = make_url_from_data(dataURI);
-            $("#preload").text("/* @pjs preload='" + processingBackgroundUrl + "'; */")
-            canvas.attr('width', $(window).width());
-            canvas.attr('height', $(window).height());
-            processingInstance.size($(window).width(), $(window).height());
-            load_image(processingBackgroundUrl, function() {
-                processingBackgroundImage = processingInstance.loadImage(processingBackgroundUrl);                
+            if (bCanvasResizeDirty == false) {
                 bCanvasResizeDirty = true;
-            })
+                processingBackgroundUrl = make_url_from_data(canvas[0].toDataURL("image/jpeg"));
+                $("#preload").text("/* @pjs preload='" + processingBackgroundUrl + "'; */")
+                load_image(processingBackgroundUrl, function() {
+                    processingBackgroundImage = processingInstance.loadImage(processingBackgroundUrl);                
+                });
+            };
         };
     };
 
