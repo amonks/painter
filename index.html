@@ -57,7 +57,7 @@
     var bCanvasResizeDirty = false;
     var currentColor = "#000000";
     var processingBackgroundImage;
-    $('#markerButton').click();
+
     // sketch
 
     function painterSketch(processing) {
@@ -127,6 +127,8 @@
     // attach the sketch function to the canvas
     var processingInstance = new Processing(document.getElementById("painter"), painterSketch);
 
+    
+    $('#markerButton').click();
 
 
     // event listener for the save image button
