@@ -35,7 +35,7 @@
         <!-- <button class="btn btn-default" id="colorButton"> -->
             <input type='color' id="colorPicker"/>
         <!-- </button> -->
-        <button class="btn btn-warning" id="rainbowButton">
+        <button class="btn btn-default" id="rainbowButton">
             <span class="glyphicon glyphicon-star-empty"></span> Rainbow</button>
         <button class="btn btn-info active" id="pencilButton">
             <span class="glyphicon glyphicon-pencil"></span> Pencil</button>
@@ -145,6 +145,8 @@
     // function to turn off rainbow mode
     function rainbowOff() {
         $('#rainbowButton').removeClass("active");
+        $('#rainbowButton').removeClass("btn-warn");
+        $('#rainbowButton').addClass("btn-default");
         $('#rainbowButton').children().removeClass("glyphicon-star");
         $('#rainbowButton').children().addClass("glyphicon-star-empty");
         bRainbow = false;
@@ -153,6 +155,8 @@
     // function to turn off rainbow mode
     function rainbowOn() {
         $('#rainbowButton').addClass("active");
+        $('#rainbowButton').removeClass("btn-default");
+        $('#rainbowButton').addClass("btn-warn");
         $('#rainbowButton').children().removeClass("glyphicon-star-empty");
         $('#rainbowButton').children().addClass("glyphicon-star");
         bRainbow = true;
