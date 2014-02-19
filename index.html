@@ -29,12 +29,13 @@
 <body>
     <canvas id="painter"></canvas>
     <div class="saveImage">
+        <input type='color' name='color' id="colorPicker"/>
         <button class="btn btn-info active" id="pencilButton">
             <span class="glyphicon glyphicon-pencil"></span> Pencil</button>
         <button class="btn btn-info" id="penButton">
             <span class="glyphicon glyphicon-tint"></span> Pen</button>
-        <button class="btn btn-info" id="eraserButton">
-            <span class="glyphicon glyphicon-leaf"></span> Eraser</button>
+        <button class="btn btn-info" id="markerButton">
+            <span class="glyphicon glyphicon-leaf"></span> Marker</button>
         <button class="btn btn-success" id="saveButton">
             <span class="glyphicon glyphicon-download-alt"></span> Save</button>
         <button class="btn btn-danger" id="trashButton">
@@ -42,6 +43,7 @@
     </div>
     <script>
     var tool;
+    var currentColor = "#000000";
     var processingBackgroundUrl;
     // sketch
 
@@ -111,7 +113,6 @@
     $('#pencilButton').click(function() {
         activateButton($(this));
         tool = "pencil";
-        processingInstance.stroke(0);
         processingInstance.strokeWeight(1);
     });
 
@@ -120,22 +121,27 @@
     $('#penButton').click(function() {
         activateButton($(this));
         tool = "pen";
-        processingInstance.stroke(0);
     });
 
 
     // event listener for the eraser button
-    $('#eraserButton').click(function() {
+    $('#markerButton').click(function() {
         activateButton($(this));
         tool = "eraser";
-        processingInstance.stroke(255);
-        processingInstance.strokeWeight(10);
+        processingInstance.strokeWeight(8);
     });
 
 
     // event listener for the trash button
     $('#trashButton').click(function() {
         processingInstance.resizeNow();
+    });
+
+
+    // event listener for the trash button
+    $('#colorPicker').change(function() {
+        currentColor = $('#colorPicker').val().toUpperCase();
+        processingInstance.stroke(processingInstance.unhex("FF" + currentColor.substring(1)));
     });
 
 
