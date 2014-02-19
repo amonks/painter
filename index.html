@@ -50,11 +50,13 @@
         <button class="btn btn-danger" id="trashButton">
             <span class="glyphicon glyphicon-trash"></span> Clear</button>
     </div>
-    <script>
+    <script id="preload"></script>
+    <script id="script">
     var tool = "pencil";
     var bRainbow = false;
+    var bCanvasResizeDirty = false;
     var currentColor = "#000000";
-    var processingBackgroundUrl;
+    var processingBackgroundImage;
     // sketch
 
     function painterSketch(processing) {
@@ -67,6 +69,10 @@
             processing.stroke(0);
         };
         processing.draw = function() {
+            if (bCanvasResizeDirty == true) {
+                processing.image(processingBackgroundImage,0,0);
+                bCanvasResizeDirty = false;
+            };
             if (bDrawing == true) {
                 // processing.ellipse( processing.mouseX - 5, processing.mouseY - 5, 10, 10 );
                 if(bRainbow == true) {
@@ -109,11 +115,6 @@
                 processing.line(lastX, lastY, processing.mouseX, processing.mouseY)
             };
             bDrawing = false;
-        };
-        processing.resizeNow = function() {
-            processing.size($(window).width(), $(window).height());
-            var b = processing.loadImage(processingBackgroundUrl);
-            processing.image(b, 0, 0);
         };
     };
 
@@ -204,7 +205,7 @@
 
     // event listener for resizing the window
     $(window).resize(function() {
-        resizeCanvas(canvas)
+        resizeCanvas(canvas);
     });
 
 
@@ -224,14 +225,18 @@
 
     // function to resize the canvas and the sketch
     function resizeCanvas(canvas) {
-
-        canvas.attr('width', $(window).width());
-        canvas.attr('height', $(window).height());
-
         if (processingInstance) {
-            var dataURI = canvas[0].toDataURL("image/jpg");
-            processingBackgroundUrl = make_url_from_data(dataURI);
-            load_image(processingBackgroundUrl, processingInstance.resizeNow());
+            var dataURI = canvas[0].toDataURL("image/jpeg");
+            // processingBackgroundUrl = dataURI;
+            var processingBackgroundUrl = make_url_from_data(dataURI);
+            $("#preload").text("/* @pjs preload='" + processingBackgroundUrl + "'; */")
+            canvas.attr('width', $(window).width());
+            canvas.attr('height', $(window).height());
+            processingInstance.size($(window).width(), $(window).height());
+            load_image(processingBackgroundUrl, function() {
+                processingBackgroundImage = processingInstance.loadImage(processingBackgroundUrl);                
+                bCanvasResizeDirty = true;
+            })
         };
     };
 
