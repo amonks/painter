@@ -9,6 +9,9 @@
 
     <link rel="stylesheet" media="all" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
 
+    <script src='spectrum.js'></script>
+    <link rel='stylesheet' href='spectrum.css' />
+
     <style>
     #painter, html, body {
         margin: 0;
@@ -17,7 +20,7 @@
     html {
         background-color: #000000;
     }
-    .saveImage {
+    .toolPalatte {
         position: absolute;
         z-index: 1;
         top: 30px;
@@ -26,10 +29,12 @@
     </style>
 </head>
 
-<body>
+<body >
     <canvas id="painter"></canvas>
-    <div class="saveImage">
-        <input type='color' name='color' id="colorPicker"/>
+    <div class="toolPalatte">
+        <!-- <button class="btn btn-default" id="colorButton"> -->
+            <input type='color' id="colorPicker"/>
+        <!-- </button> -->
         <button class="btn btn-info active" id="pencilButton">
             <span class="glyphicon glyphicon-pencil"></span> Pencil</button>
         <button class="btn btn-info" id="penButton">
@@ -137,21 +142,23 @@
         processingInstance.resizeNow();
     });
 
-
-    // event listener for the trash button
+    // event listener for the color picker input
     $('#colorPicker').change(function() {
-        currentColor = $('#colorPicker').val().toUpperCase();
-        processingInstance.stroke(processingInstance.unhex("FF" + currentColor.substring(1)));
+        currentColor = $('#colorPicker').val();
+        setColor();
     });
 
 
     // function to turn this button on, and the other buttons off.
-
     function activateButton(button) {
         $('button').removeClass("active");
         button.addClass("active");
     };
 
+    // function to set the stroke color in processing
+    function setColor() {
+        processingInstance.stroke(processingInstance.unhex("FF" + currentColor.substring(1).toUpperCase()));
+    };
 
     // function to resize the canvas and the sketch
 
