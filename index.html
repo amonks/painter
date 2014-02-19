@@ -24,7 +24,7 @@
         position: absolute;
         z-index: 1;
         top: 30px;
-        right: 10px;
+        left: 10px;
     }
     </style>
 </head>
@@ -32,11 +32,10 @@
 <body >
     <canvas id="painter"></canvas>
     <div class="toolPalatte">
-        <!-- <button class="btn btn-default" id="colorButton"> -->
-            <input type='color' id="colorPicker"/>
-        <!-- </button> -->
-        <button class="btn btn-default" id="rainbowButton">
-            <span class="glyphicon glyphicon-star-empty"></span> Rainbow</button>
+        <button class="btn btn-danger" id="trashButton">
+            <span class="glyphicon glyphicon-trash"></span> Clear</button>
+        <button class="btn btn-success" id="saveButton">
+            <span class="glyphicon glyphicon-download-alt"></span> Save</button>
         <button class="btn btn-info active" id="pencilButton">
             <span class="glyphicon glyphicon-pencil"></span> Pencil</button>
         <button class="btn btn-info" id="markerButton">
@@ -45,10 +44,11 @@
             <span class="glyphicon glyphicon-tint"></span> Pen</button>
         <button class="btn btn-info" id="lineButton">
             <span class="glyphicon glyphicon-screenshot"></span> Line</button>
-        <button class="btn btn-success" id="saveButton">
-            <span class="glyphicon glyphicon-download-alt"></span> Save</button>
-        <button class="btn btn-danger" id="trashButton">
-            <span class="glyphicon glyphicon-trash"></span> Clear</button>
+        <button class="btn btn-default" id="rainbowButton">
+            <span class="glyphicon glyphicon-star-empty"></span> Rainbow</button>
+        <!-- <button class="btn btn-default" id="colorButton"> -->
+            <input type='color' id="colorPicker"/>
+        <!-- </button> -->
     </div>
     <script id="preload"></script>
     <script id="script">
