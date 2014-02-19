@@ -35,19 +35,24 @@
         <!-- <button class="btn btn-default" id="colorButton"> -->
             <input type='color' id="colorPicker"/>
         <!-- </button> -->
+        <button class="btn btn-warning" id="rainbowButton">
+            <span class="glyphicon glyphicon-star-empty"></span> Rainbow</button>
         <button class="btn btn-info active" id="pencilButton">
             <span class="glyphicon glyphicon-pencil"></span> Pencil</button>
         <button class="btn btn-info" id="markerButton">
             <span class="glyphicon glyphicon-leaf"></span> Marker</button>
         <button class="btn btn-info" id="penButton">
             <span class="glyphicon glyphicon-tint"></span> Pen</button>
+        <button class="btn btn-info" id="lineButton">
+            <span class="glyphicon glyphicon-screenshot"></span> Line</button>
         <button class="btn btn-success" id="saveButton">
             <span class="glyphicon glyphicon-download-alt"></span> Save</button>
         <button class="btn btn-danger" id="trashButton">
             <span class="glyphicon glyphicon-trash"></span> Clear</button>
     </div>
     <script>
-    var tool;
+    var tool = "pencil";
+    var bRainbow = false;
     var currentColor = "#000000";
     var processingBackgroundUrl;
     // sketch
@@ -64,17 +69,34 @@
         processing.draw = function() {
             if (bDrawing == true) {
                 // processing.ellipse( processing.mouseX - 5, processing.mouseY - 5, 10, 10 );
-                if (tool == "pen") {
-                    var speed = processing.dist(lastX, lastY, processing.mouseX, processing.mouseY);
-                    var weight = processing.map(speed,
-                        0, 100,
-                        15, 1
-                    );
-                    processing.strokeWeight(weight);
+                if(bRainbow == true) {
+                    random_color();
+                }
+                switch(tool){
+                    case "pen":
+                        var speed = processing.dist(lastX, lastY, processing.mouseX, processing.mouseY);
+                        var weight = processing.map(speed,
+                            0, 100,
+                            15, 1
+                        );
+                        processing.strokeWeight(weight);
+                        processing.line(lastX, lastY, processing.mouseX, processing.mouseY)
+                        lastX = processing.mouseX;
+                        lastY = processing.mouseY;
+                        break;
+                    case "marker":
+                        processing.line(lastX, lastY, processing.mouseX, processing.mouseY)
+                        lastX = processing.mouseX;
+                        lastY = processing.mouseY;
+                        break;
+                    case "pencil":
+                        processing.line(lastX, lastY, processing.mouseX, processing.mouseY)
+                        lastX = processing.mouseX;
+                        lastY = processing.mouseY;
+                        break;
+                    case "line":
+                        break;
                 };
-                processing.line(lastX, lastY, processing.mouseX, processing.mouseY)
-                lastX = processing.mouseX;
-                lastY = processing.mouseY;
             };
         };
         processing.mousePressed = function() {
@@ -83,6 +105,9 @@
             bDrawing = true;
         };
         processing.mouseReleased = function() {
+            if (tool == "line") {
+                processing.line(lastX, lastY, processing.mouseX, processing.mouseY)
+            };
             bDrawing = false;
         };
         processing.resizeNow = function() {
@@ -100,19 +125,38 @@
     var processingInstance = new Processing(document.getElementById("painter"), painterSketch);
 
 
-    // event listener for resizing the window
-    $(window).resize(function() {
-        resizeCanvas(canvas)
-    });
-
 
     // event listener for the save image button
     $('#saveButton').click(function() {
-        var outputPrefixes = ["stellar-", "awesome-", "fantastic-", "remarkable-", "enchanting-", "mesmerizing-", "outstanding-"];
+        var outputPrefixes = ["stellar", "awesome", "fantastic", "remarkable", "enchanting", "mesmerizing", "outstanding", "wonderful"];
         var dataURI = canvas[0].toDataURL("image/png");
-        download_data_uri(dataURI, random_from_array(outputPrefixes) + "painting.png");
+        download_data_uri(dataURI, random_from_array(outputPrefixes) + "-" + "painting.png");
     });
 
+    // event listener for the rainbow button
+    $('#rainbowButton').click(function() {
+        if (bRainbow == false) {
+            rainbowOn();
+        } else {
+            rainbowOff();
+        };
+    });
+
+    // function to turn off rainbow mode
+    function rainbowOff() {
+        $('#rainbowButton').removeClass("active");
+        $('#rainbowButton').children().removeClass("glyphicon-star");
+        $('#rainbowButton').children().addClass("glyphicon-star-empty");
+        bRainbow = false;
+    }
+
+    // function to turn off rainbow mode
+    function rainbowOn() {
+        $('#rainbowButton').addClass("active");
+        $('#rainbowButton').children().removeClass("glyphicon-star-empty");
+        $('#rainbowButton').children().addClass("glyphicon-star");
+        bRainbow = true;
+    }
 
     // event listener for the pencil button
     $('#pencilButton').click(function() {
@@ -121,21 +165,25 @@
         processingInstance.strokeWeight(1);
     });
 
-
     // event listener for the pen button
     $('#penButton').click(function() {
         activateButton($(this));
         tool = "pen";
     });
 
-
-    // event listener for the eraser button
+    // event listener for the marker button
     $('#markerButton').click(function() {
         activateButton($(this));
-        tool = "eraser";
+        tool = "marker";
         processingInstance.strokeWeight(8);
     });
 
+    // event listener for the line button
+    $('#lineButton').click(function() {
+        activateButton($(this));
+        tool = "line";
+        processingInstance.strokeWeight(1);
+    });
 
     // event listener for the trash button
     $('#trashButton').click(function() {
@@ -145,7 +193,14 @@
     // event listener for the color picker input
     $('#colorPicker').change(function() {
         currentColor = $('#colorPicker').val();
+        rainbowOff();
         setColor();
+    });
+
+
+    // event listener for resizing the window
+    $(window).resize(function() {
+        resizeCanvas(canvas)
     });
 
 
@@ -155,13 +210,15 @@
         button.addClass("active");
     };
 
+
     // function to set the stroke color in processing
     function setColor() {
         processingInstance.stroke(processingInstance.unhex("FF" + currentColor.substring(1).toUpperCase()));
+        $('#colorPicker').val(currentColor);
     };
 
-    // function to resize the canvas and the sketch
 
+    // function to resize the canvas and the sketch
     function resizeCanvas(canvas) {
 
         canvas.attr('width', $(window).width());
@@ -176,15 +233,21 @@
 
 
     // function to return a random member of a given array
-
     function random_from_array(array) {
         return array[Math.floor(Math.random() * array.length)];
     };
 
 
+    // function to return a random hex color, needed by make_doge_html()
+    // classic elegant solution from http://paulirish.com/2009/random-hex-color-code-snippets/
+    function random_color() {
+        currentColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+        setColor();
+    };
+
+
     // function to force-download from a data uri as a filename
     // nb the download="filename" attribute isn't yet supported by safari
-
     function download_data_uri(dataURI, fileName) {
         var tempUrl = make_url_from_data(dataURI);
         var link = $('<a href="' + tempUrl + '" id="download" download="' + fileName + '" target="_blank"> </a>');
@@ -196,7 +259,6 @@
     // function to generate a temporary browser index url for a datauri
     // if a data-uri is larger than 2mb, chrome's address bar can't handle it.
     // fortunately, you can blob it and then use a temporary blob url
-
     function make_url_from_data(dataURI) {
         var blob = make_blob(dataURI);
         var tempUrl = URL.createObjectURL(blob);
@@ -206,7 +268,6 @@
 
     // function to convert a datauri to a blob
     // I'm not totally sure what a blob is, but apparantly they can hold binary data and generate temporary urls.
-
     function make_blob(dataURI) {
         // convert base64 to raw binary data held in a string
         // doesn't handle URLEncoded DataURIs
@@ -233,7 +294,6 @@
 
 
     // function to load an image and hit a callback when it's done
-
     function load_image(src, callback) {
         var sprite = new Image();
         sprite.onload = callback;
