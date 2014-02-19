@@ -37,7 +37,7 @@
         <!-- </button> -->
         <button class="btn btn-default" id="rainbowButton">
             <span class="glyphicon glyphicon-star-empty"></span> Rainbow</button>
-        <button class="active btn btn-info" id="markerButton">
+        <button class="btn btn-info" id="markerButton">
             <span class="glyphicon glyphicon-leaf"></span> Marker</button>
         <button class="btn btn-info" id="pencilButton">
             <span class="glyphicon glyphicon-pencil"></span> Pencil</button>
@@ -52,11 +52,12 @@
     </div>
     <script id="preload"></script>
     <script id="script">
-    var tool = "marker";
+    var tool;
     var bRainbow = false;
     var bCanvasResizeDirty = false;
     var currentColor = "#000000";
     var processingBackgroundImage;
+    $('#markerButton').click();
     // sketch
 
     function painterSketch(processing) {
@@ -66,6 +67,7 @@
         processing.setup = function() {
             processing.background(255);
             processing.fill(0);
+            processing.strokeWeight(8);
             processing.stroke(0);
         };
         processing.draw = function() {
