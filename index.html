@@ -37,10 +37,10 @@
         <!-- </button> -->
         <button class="btn btn-default" id="rainbowButton">
             <span class="glyphicon glyphicon-star-empty"></span> Rainbow</button>
+        <button class="btn btn-info active" id="pencilButton">
+            <span class="glyphicon glyphicon-pencil"></span> Pencil</button>
         <button class="btn btn-info" id="markerButton">
             <span class="glyphicon glyphicon-leaf"></span> Marker</button>
-        <button class="btn btn-info" id="pencilButton">
-            <span class="glyphicon glyphicon-pencil"></span> Pencil</button>
         <button class="btn btn-info" id="penButton">
             <span class="glyphicon glyphicon-tint"></span> Pen</button>
         <button class="btn btn-info" id="lineButton">
@@ -67,7 +67,6 @@
         processing.setup = function() {
             processing.background(255);
             processing.fill(0);
-            processing.strokeWeight(8);
             processing.stroke(0);
         };
         processing.draw = function() {
@@ -126,9 +125,6 @@
 
     // attach the sketch function to the canvas
     var processingInstance = new Processing(document.getElementById("painter"), painterSketch);
-
-    
-    $('#markerButton').click();
 
 
     // event listener for the save image button
