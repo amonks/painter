@@ -37,6 +37,8 @@
             <span class="glyphicon glyphicon-leaf"></span> Eraser</button>
         <button class="btn btn-success" id="saveButton">
             <span class="glyphicon glyphicon-download-alt"></span> Save Image</button>
+        <button class="btn btn-danger" id="trashButton">
+            <span class="glyphicon glyphicon-trash"></span> Clear Image</button>
     </div>
     <script>
     var tool;
@@ -128,6 +130,12 @@
         tool = "eraser";
         processingInstance.stroke(255);
         processingInstance.strokeWeight(10);
+    });
+
+
+    // event listener for the trash button
+    $('#trashButton').click(function() {
+        processingInstance.resizeNow();
     });
 
 
